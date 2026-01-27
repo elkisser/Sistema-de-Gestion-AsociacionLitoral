@@ -103,10 +103,10 @@ export const QuickOrderModal = () => {
   if (!isQuickOrderOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm sm:p-4 p-0 animate-in fade-in duration-200">
       <div 
         ref={modalRef}
-        className="bg-background-secondary border border-border w-full max-w-lg rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-in zoom-in-95 duration-200"
+        className="bg-background-secondary border-t sm:border border-border w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col h-[90vh] sm:h-auto sm:max-h-[90vh] overflow-hidden animate-in slide-in-from-bottom sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-200"
       >
         <div className="p-4 border-b border-border flex items-center justify-between bg-background-tertiary/50">
           <h2 className="font-bold text-lg flex items-center gap-2">
@@ -115,9 +115,9 @@ export const QuickOrderModal = () => {
           </h2>
           <button 
             onClick={closeQuickOrder}
-            className="text-text-secondary hover:text-text-primary p-1 rounded-lg hover:bg-background-tertiary transition-colors"
+            className="text-text-secondary hover:text-text-primary p-2 -mr-2 rounded-lg hover:bg-background-tertiary transition-colors"
           >
-            <X className="w-5 h-5" />
+            <X className="w-6 h-6" />
           </button>
         </div>
 

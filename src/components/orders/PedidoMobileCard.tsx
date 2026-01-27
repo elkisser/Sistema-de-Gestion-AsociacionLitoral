@@ -11,7 +11,9 @@ import {
   Truck, 
   Package,
   User,
-  Clock
+  Clock,
+  CheckCircle2,
+  AlertCircle
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -79,27 +81,37 @@ export const PedidoMobileCard = ({
       <div className="grid grid-cols-2 gap-3 text-sm">
         <div className="bg-background-tertiary/50 p-2 rounded-lg">
           <p className="text-xs text-text-secondary mb-1 flex items-center gap-1">
-            <Package className="w-3 h-3" /> Variedad
+            <Package className="w-3.5 h-3.5" /> Variedad
           </p>
           <p className="font-medium truncate">{pedido.variedad}</p>
           <p className="text-xs text-brand">{pedido.cantidad}g</p>
         </div>
         
-        <div className="bg-background-tertiary/50 p-2 rounded-lg">
-          <p className="text-xs text-text-secondary mb-1 flex items-center gap-1">
-            <DollarSign className="w-3 h-3" /> Total
-          </p>
-          <p className="font-medium font-mono">${pedido.precio_total.toLocaleString()}</p>
+        <div className="bg-background-tertiary/50 p-2 rounded-lg flex flex-col justify-between">
+          <div>
+            <p className="text-xs text-text-secondary mb-1 flex items-center gap-1">
+              <DollarSign className="w-3.5 h-3.5" /> Total
+            </p>
+            <p className="font-medium font-mono">${pedido.precio_total.toLocaleString()}</p>
+          </div>
           <button
             onClick={() => onPaymentChange(pedido.id)}
             className={cn(
-              "text-[10px] px-1.5 py-0.5 rounded mt-1 border transition-colors",
+              "w-full flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-medium border transition-colors mt-2",
               isPaid 
                 ? "text-status-success border-status-success/30 bg-status-success/10" 
                 : "text-status-danger border-status-danger/30 bg-status-danger/10"
             )}
           >
-            {isPaid ? 'Pagado' : 'No Pagado'}
+            {isPaid ? (
+              <>
+                <CheckCircle2 className="w-3.5 h-3.5" /> Pagado
+              </>
+            ) : (
+              <>
+                <AlertCircle className="w-3.5 h-3.5" /> Pendiente
+              </>
+            )}
           </button>
         </div>
       </div>
@@ -110,14 +122,15 @@ export const PedidoMobileCard = ({
           {isEnvio ? <Truck className="w-4 h-4" /> : <Package className="w-4 h-4" />}
           <span className="capitalize font-medium text-text-primary">{pedido.modalidad}</span>
           {pedido.fecha_entrega && (
-            <span className="text-xs bg-background-tertiary px-2 py-0.5 rounded">
+            <span className="text-xs bg-background-tertiary px-2 py-0.5 rounded flex items-center gap-1">
+              <Clock className="w-3 h-3" />
               {format(new Date(pedido.fecha_entrega), "d MMM", { locale: es })}
             </span>
           )}
         </div>
         
         {isEnvio && pedido.direccion && (
-          <div className="flex items-start gap-2 text-sm bg-brand/5 p-2 rounded-lg border border-brand/10">
+          <div className="flex items-start gap-2 text-sm bg-brand/5 p-3 rounded-lg border border-brand/10">
             <MapPin className="w-4 h-4 text-brand mt-0.5 shrink-0" />
             <p className="text-text-secondary leading-tight">{pedido.direccion}</p>
           </div>
@@ -125,18 +138,20 @@ export const PedidoMobileCard = ({
       </div>
 
       {/* Actions */}
-      <div className="flex gap-2 pt-2">
+      <div className="grid grid-cols-2 gap-3 pt-2">
         <button 
           onClick={() => onEdit(pedido)}
-          className="flex-1 btn-secondary py-2 text-xs flex items-center justify-center gap-2"
+          className="btn-secondary py-2.5 text-sm flex items-center justify-center gap-2 hover:bg-brand/5 hover:text-brand hover:border-brand/20 transition-all"
         >
-          <Edit2 className="w-3 h-3" /> Editar
+          <Edit2 className="w-4 h-4" /> 
+          <span>Editar</span>
         </button>
         <button 
           onClick={() => onDelete(pedido.id)}
-          className="w-10 flex items-center justify-center btn-secondary text-status-danger hover:bg-status-danger/10 border-status-danger/20"
+          className="btn-secondary py-2.5 text-sm flex items-center justify-center gap-2 text-status-danger hover:bg-status-danger/10 border-status-danger/20 hover:border-status-danger/30 transition-all"
         >
           <Trash2 className="w-4 h-4" />
+          <span>Eliminar</span>
         </button>
       </div>
     </div>

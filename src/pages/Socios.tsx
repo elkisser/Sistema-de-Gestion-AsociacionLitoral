@@ -225,20 +225,22 @@ export const Socios = () => {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="card w-full max-w-md relative animate-in fade-in zoom-in duration-200">
-            <button 
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 text-text-secondary hover:text-text-primary"
-            >
-              <X className="w-5 h-5" />
-            </button>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm sm:p-4 p-0">
+          <div className="bg-background-secondary w-full sm:max-w-md rounded-t-2xl sm:rounded-xl shadow-2xl relative flex flex-col animate-in slide-in-from-bottom sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-200">
+            <div className="flex items-center justify-between p-4 border-b border-border">
+              <h2 className="text-xl font-bold">
+                {editingSocio ? 'Editar Socio' : 'Nuevo Socio'}
+              </h2>
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                className="text-text-secondary hover:text-text-primary p-2 -mr-2"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
             
-            <h2 className="text-xl font-bold mb-6">
-              {editingSocio ? 'Editar Socio' : 'Nuevo Socio'}
-            </h2>
-            
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="p-4">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-text-secondary">Nombre Completo</label>
                 <input 
@@ -273,6 +275,7 @@ export const Socios = () => {
                 </button>
               </div>
             </form>
+            </div>
           </div>
         </div>
       )}

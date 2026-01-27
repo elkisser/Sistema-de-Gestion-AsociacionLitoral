@@ -56,8 +56,8 @@ export const SocioDetailsModal = ({ socio, onClose }: SocioDetailsModalProps) =>
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-background-secondary border-l border-border h-full w-full max-w-md shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-stretch sm:justify-end bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="bg-background-secondary border-t sm:border-l sm:border-t-0 border-border h-[90vh] sm:h-full w-full sm:max-w-md shadow-2xl flex flex-col rounded-t-2xl sm:rounded-none animate-in slide-in-from-bottom sm:slide-in-from-right duration-300">
         <div className="p-6 border-b border-border flex items-center justify-between bg-background-tertiary/50">
           <div>
             <h2 className="font-bold text-xl">{socio.nombre}</h2>
@@ -65,9 +65,9 @@ export const SocioDetailsModal = ({ socio, onClose }: SocioDetailsModalProps) =>
           </div>
           <button 
             onClick={onClose}
-            className="text-text-secondary hover:text-text-primary p-2 rounded-lg hover:bg-background-tertiary transition-colors"
+            className="text-text-secondary hover:text-text-primary p-2 -mr-2 rounded-lg hover:bg-background-tertiary transition-colors"
           >
-            <X className="w-5 h-5" />
+            <X className="w-6 h-6" />
           </button>
         </div>
 

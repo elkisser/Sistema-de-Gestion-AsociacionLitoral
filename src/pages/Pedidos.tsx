@@ -11,7 +11,8 @@ import {
   CheckCircle2,
   Clock,
   Truck,
-  AlertCircle
+  AlertCircle,
+  Search
 } from 'lucide-react';
 import { api } from '../services/api';
 import { Pedido, PedidoInsert, Socio } from '../types';
@@ -35,6 +36,7 @@ export const Pedidos = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const statusFilter = searchParams.get('estado') || 'all';
   const paymentFilter = searchParams.get('pago') || 'all';
+  const [searchQuery, setSearchQuery] = useState('');
 
   const { openQuickOrder } = useUIStore();
   const { register, handleSubmit, reset, setValue, watch } = useForm<PedidoInsert>();
@@ -249,7 +251,10 @@ export const Pedidos = () => {
   const filteredPedidos = pedidos.filter(p => {
     const matchesStatus = statusFilter === 'all' || p.estado_pedido === statusFilter;
     const matchesPayment = paymentFilter === 'all' || p.estado_pago === paymentFilter;
-    return matchesStatus && matchesPayment;
+    const matchesSearch = searchQuery === '' || 
+      p.variedad.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (p.socio?.nombre || '').toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesStatus && matchesPayment && matchesSearch;
   });
 
   return (
@@ -269,28 +274,51 @@ export const Pedidos = () => {
       </div>
 
       <div className="card space-y-4">
-        <div className="flex items-center gap-2 flex-wrap">
-          <Filter className="w-5 h-5 text-text-secondary" />
-          <select 
-            value={statusFilter}
-            onChange={(e) => setSearchParams({ ...Object.fromEntries(searchParams), estado: e.target.value })}
-            className="bg-background-tertiary border border-border rounded-xl px-4 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-brand/50 text-sm"
-          >
-            <option value="all">Todos los estados</option>
-            <option value="pendiente">Pendientes</option>
-            <option value="en_reparto">En Reparto</option>
-            <option value="entregado">Entregados</option>
-          </select>
+        {/* Search and Filters Bar */}
+        <div className="flex flex-col md:flex-row gap-4">
+          {/* Search Bar */}
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
+            <input
+              type="text"
+              placeholder="Buscar por variedad o socio..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-4 py-2.5 bg-background-tertiary border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand/50 text-sm"
+            />
+          </div>
 
-           <select 
-            value={paymentFilter}
-            onChange={(e) => setSearchParams({ ...Object.fromEntries(searchParams), pago: e.target.value })}
-            className="bg-background-tertiary border border-border rounded-xl px-4 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-brand/50 text-sm"
-          >
-            <option value="all">Todos los pagos</option>
-            <option value="pendiente">Pendiente</option>
-            <option value="confirmado">Confirmado</option>
-          </select>
+          {/* Filters */}
+          <div className="grid grid-cols-2 gap-2 md:flex">
+             {/* Status Filter */}
+            <div className="relative md:min-w-[160px]">
+               <select 
+                value={statusFilter}
+                onChange={(e) => setSearchParams({ ...Object.fromEntries(searchParams), estado: e.target.value })}
+                className="w-full appearance-none bg-background-tertiary border border-border rounded-xl pl-4 pr-8 py-2.5 text-text-primary focus:outline-none focus:ring-2 focus:ring-brand/50 text-sm"
+              >
+                <option value="all">Estado: Todos</option>
+                <option value="pendiente">Pendientes</option>
+                <option value="en_reparto">En Reparto</option>
+                <option value="entregado">Entregados</option>
+              </select>
+              <Filter className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary pointer-events-none" />
+            </div>
+
+             {/* Payment Filter */}
+            <div className="relative md:min-w-[160px]">
+               <select 
+                value={paymentFilter}
+                onChange={(e) => setSearchParams({ ...Object.fromEntries(searchParams), pago: e.target.value })}
+                className="w-full appearance-none bg-background-tertiary border border-border rounded-xl pl-4 pr-8 py-2.5 text-text-primary focus:outline-none focus:ring-2 focus:ring-brand/50 text-sm"
+              >
+                <option value="all">Pago: Todos</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="confirmado">Confirmado</option>
+              </select>
+              <Filter className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary pointer-events-none" />
+            </div>
+          </div>
         </div>
 
         {loading ? (
@@ -303,8 +331,6 @@ export const Pedidos = () => {
               <DataTable 
                 columns={columns} 
                 data={filteredPedidos} 
-                searchColumn="variedad"
-                searchPlaceholder="Buscar por variedad..."
               />
             </div>
 
@@ -339,21 +365,23 @@ export const Pedidos = () => {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="card w-full max-w-2xl relative animate-in fade-in zoom-in duration-200 my-8">
-            <button 
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 text-text-secondary hover:text-text-primary"
-            >
-              <X className="w-5 h-5" />
-            </button>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm sm:p-4 p-0">
+          <div className="bg-background-secondary w-full sm:max-w-2xl h-[90vh] sm:h-auto rounded-t-2xl sm:rounded-xl shadow-2xl relative flex flex-col animate-in slide-in-from-bottom sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-200">
+            <div className="flex items-center justify-between p-4 border-b border-border">
+              <h2 className="text-xl font-bold">
+                {editingPedido ? 'Editar Pedido' : 'Nuevo Pedido'}
+              </h2>
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                className="text-text-secondary hover:text-text-primary p-2 -mr-2"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
             
-            <h2 className="text-xl font-bold mb-6">
-              {editingPedido ? 'Editar Pedido' : 'Nuevo Pedido'}
-            </h2>
-            
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex-1 overflow-y-auto p-4">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-text-secondary">Socio</label>
                   <select 
@@ -479,6 +507,7 @@ export const Pedidos = () => {
                 </button>
               </div>
             </form>
+            </div>
           </div>
         </div>
       )}
