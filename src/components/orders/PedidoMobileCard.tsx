@@ -13,7 +13,8 @@ import {
   User,
   Clock,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  RefreshCw
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -22,6 +23,7 @@ interface PedidoMobileCardProps {
   onStatusChange: (id: string, value: string) => void;
   onPaymentChange: (id: string) => void;
   onEdit: (pedido: Pedido) => void;
+  onStatusUpdate: () => void;
   onDelete: (id: string) => void;
 }
 
@@ -30,6 +32,7 @@ export const PedidoMobileCard = ({
   onStatusChange, 
   onPaymentChange, 
   onEdit, 
+  onStatusUpdate,
   onDelete 
 }: PedidoMobileCardProps) => {
   const isEnvio = pedido.modalidad === 'envio';
@@ -138,20 +141,27 @@ export const PedidoMobileCard = ({
       </div>
 
       {/* Actions */}
-      <div className="grid grid-cols-2 gap-3 pt-2">
+      <div className="grid grid-cols-3 gap-2 pt-2">
+        <button 
+          onClick={onStatusUpdate}
+          className="btn-secondary py-2.5 text-sm flex items-center justify-center gap-2 hover:bg-brand/5 hover:text-brand hover:border-brand/20 transition-all"
+        >
+          <RefreshCw className="w-4 h-4" /> 
+          <span className="sr-only sm:not-sr-only sm:inline">Estado</span>
+        </button>
         <button 
           onClick={() => onEdit(pedido)}
           className="btn-secondary py-2.5 text-sm flex items-center justify-center gap-2 hover:bg-brand/5 hover:text-brand hover:border-brand/20 transition-all"
         >
           <Edit2 className="w-4 h-4" /> 
-          <span>Editar</span>
+          <span className="sr-only sm:not-sr-only sm:inline">Editar</span>
         </button>
         <button 
           onClick={() => onDelete(pedido.id)}
           className="btn-secondary py-2.5 text-sm flex items-center justify-center gap-2 text-status-danger hover:bg-status-danger/10 border-status-danger/20 hover:border-status-danger/30 transition-all"
         >
           <Trash2 className="w-4 h-4" />
-          <span>Eliminar</span>
+          <span className="sr-only sm:not-sr-only sm:inline">Eliminar</span>
         </button>
       </div>
     </div>

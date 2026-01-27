@@ -225,7 +225,7 @@ export const Socios = () => {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm sm:p-4 p-0">
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm sm:p-4 p-0">
           <div className="bg-background-secondary w-full sm:max-w-md rounded-t-2xl sm:rounded-xl shadow-2xl relative flex flex-col animate-in slide-in-from-bottom sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-200">
             <div className="flex items-center justify-between p-4 border-b border-border">
               <h2 className="text-xl font-bold">

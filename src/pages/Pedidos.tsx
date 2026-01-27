@@ -25,6 +25,9 @@ import { Badge } from '../components/ui/Badge';
 import { cn } from '../lib/utils';
 import { useUIStore } from '../services/uiStore';
 import { PedidoMobileCard } from '../components/orders/PedidoMobileCard';
+import { StatusUpdateModal } from '../components/orders/StatusUpdateModal';
+import { MobileFilterModal } from '../components/orders/MobileFilterModal';
+import { RefreshCw } from 'lucide-react';
 
 export const Pedidos = () => {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
@@ -33,6 +36,11 @@ export const Pedidos = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPedido, setEditingPedido] = useState<Pedido | null>(null);
   
+  // Status Update Modal State
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+  const [selectedPedidoForStatus, setSelectedPedidoForStatus] = useState<Pedido | null>(null);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+
   const [searchParams, setSearchParams] = useSearchParams();
   const statusFilter = searchParams.get('estado') || 'all';
   const paymentFilter = searchParams.get('pago') || 'all';
@@ -140,6 +148,27 @@ export const Pedidos = () => {
     }
   };
 
+  const handleStatusUpdate = async (id: string, data: { estado_pedido: string; estado_pago: string }) => {
+    try {
+      // Type casting for strict typing
+      const typedData = {
+        estado_pedido: data.estado_pedido as 'pendiente' | 'en_reparto' | 'entregado',
+        estado_pago: data.estado_pago as 'pendiente' | 'confirmado'
+      };
+
+      // Optimistic update
+      setPedidos(prev => prev.map(p => 
+        p.id === id ? { ...p, ...typedData } : p
+      ));
+      
+      await api.pedidos.update(id, typedData);
+      toast.success('Estados actualizados correctamente');
+    } catch (error) {
+      toast.error('Error al actualizar estados');
+      fetchData(); // Revert on error
+    }
+  };
+
   const columns: ColumnDef<Pedido>[] = [
     {
       accessorKey: 'estado_pedido',
@@ -230,6 +259,16 @@ export const Pedidos = () => {
         <div className="flex items-center justify-end gap-2">
           <button 
             onClick={() => {
+              setSelectedPedidoForStatus(row.original);
+              setIsStatusModalOpen(true);
+            }}
+            className="p-2 hover:bg-background-tertiary rounded-lg text-text-primary transition-colors"
+            title="Actualizar Estados"
+          >
+            <RefreshCw className="w-4 h-4" />
+          </button>
+          <button 
+            onClick={() => {
               setEditingPedido(row.original);
               setIsModalOpen(true);
             }}
@@ -277,46 +316,76 @@ export const Pedidos = () => {
         {/* Search and Filters Bar */}
         <div className="flex flex-col md:flex-row gap-4">
           {/* Search Bar */}
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
-            <input
-              type="text"
-              placeholder="Buscar por variedad o socio..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 bg-background-tertiary border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand/50 text-sm"
-            />
+          <div className="flex gap-2 flex-1">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
+              <input
+                type="text"
+                placeholder="Buscar por variedad o socio..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-4 py-2.5 bg-background-tertiary border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand/50 text-sm"
+              />
+            </div>
+            <button
+              onClick={() => setIsFilterModalOpen(true)}
+              className="md:hidden p-2.5 bg-background-tertiary border border-border rounded-xl text-text-secondary hover:text-brand hover:border-brand transition-colors active:scale-95"
+            >
+              <Filter className="w-5 h-5" />
+            </button>
           </div>
 
-          {/* Filters */}
-          <div className="grid grid-cols-2 gap-2 md:flex">
-             {/* Status Filter */}
-            <div className="relative md:min-w-[160px]">
-               <select 
-                value={statusFilter}
-                onChange={(e) => setSearchParams({ ...Object.fromEntries(searchParams), estado: e.target.value })}
-                className="w-full appearance-none bg-background-tertiary border border-border rounded-xl pl-4 pr-8 py-2.5 text-text-primary focus:outline-none focus:ring-2 focus:ring-brand/50 text-sm"
-              >
-                <option value="all">Estado: Todos</option>
-                <option value="pendiente">Pendientes</option>
-                <option value="en_reparto">En Reparto</option>
-                <option value="entregado">Entregados</option>
-              </select>
-              <Filter className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary pointer-events-none" />
+          {/* Filters - Desktop Only */}
+          <div className="hidden md:flex flex-col gap-3 w-full md:w-auto overflow-hidden">
+            {/* Status Filter */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar">
+              <span className="text-xs font-medium text-text-secondary whitespace-nowrap uppercase tracking-wider">Estado</span>
+              <div className="flex gap-2">
+                {[
+                  { value: 'all', label: 'Todos' },
+                  { value: 'pendiente', label: 'Pendiente' },
+                  { value: 'en_reparto', label: 'En Reparto' },
+                  { value: 'entregado', label: 'Entregado' }
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => setSearchParams({ ...Object.fromEntries(searchParams), estado: option.value })}
+                    className={cn(
+                      "px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all border",
+                      statusFilter === option.value
+                        ? "bg-brand text-white border-brand shadow-sm"
+                        : "bg-background-tertiary text-text-secondary border-border hover:border-brand/50 hover:text-text-primary"
+                    )}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
-             {/* Payment Filter */}
-            <div className="relative md:min-w-[160px]">
-               <select 
-                value={paymentFilter}
-                onChange={(e) => setSearchParams({ ...Object.fromEntries(searchParams), pago: e.target.value })}
-                className="w-full appearance-none bg-background-tertiary border border-border rounded-xl pl-4 pr-8 py-2.5 text-text-primary focus:outline-none focus:ring-2 focus:ring-brand/50 text-sm"
-              >
-                <option value="all">Pago: Todos</option>
-                <option value="pendiente">Pendiente</option>
-                <option value="confirmado">Confirmado</option>
-              </select>
-              <Filter className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary pointer-events-none" />
+            {/* Payment Filter */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar">
+              <span className="text-xs font-medium text-text-secondary whitespace-nowrap uppercase tracking-wider pl-1">Pago</span>
+              <div className="flex gap-2">
+                {[
+                  { value: 'all', label: 'Todos' },
+                  { value: 'pendiente', label: 'Pendiente' },
+                  { value: 'confirmado', label: 'Confirmado' }
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => setSearchParams({ ...Object.fromEntries(searchParams), pago: option.value })}
+                    className={cn(
+                      "px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all border",
+                      paymentFilter === option.value
+                        ? "bg-brand text-white border-brand shadow-sm"
+                        : "bg-background-tertiary text-text-secondary border-border hover:border-brand/50 hover:text-text-primary"
+                    )}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -354,6 +423,10 @@ export const Pedidos = () => {
                       setEditingPedido(p);
                       setIsModalOpen(true);
                     }}
+                    onStatusUpdate={() => {
+                      setSelectedPedidoForStatus(pedido);
+                      setIsStatusModalOpen(true);
+                    }}
                     onDelete={handleDelete}
                   />
                 ))
@@ -363,9 +436,33 @@ export const Pedidos = () => {
         )}
       </div>
 
+      <StatusUpdateModal 
+        isOpen={isStatusModalOpen}
+        onClose={() => {
+          setIsStatusModalOpen(false);
+          setSelectedPedidoForStatus(null);
+        }}
+        pedido={selectedPedidoForStatus}
+        onUpdate={handleStatusUpdate}
+      />
+
+      <MobileFilterModal 
+        isOpen={isFilterModalOpen}
+        onClose={() => setIsFilterModalOpen(false)}
+        currentStatus={statusFilter}
+        currentPayment={paymentFilter}
+        onApply={(status, payment) => {
+          setSearchParams({ 
+            ...Object.fromEntries(searchParams), 
+            estado: status,
+            pago: payment 
+          });
+        }}
+      />
+
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm sm:p-4 p-0">
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm sm:p-4 p-0">
           <div className="bg-background-secondary w-full sm:max-w-2xl h-[90vh] sm:h-auto rounded-t-2xl sm:rounded-xl shadow-2xl relative flex flex-col animate-in slide-in-from-bottom sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-200">
             <div className="flex items-center justify-between p-4 border-b border-border">
               <h2 className="text-xl font-bold">
