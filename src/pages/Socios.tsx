@@ -14,6 +14,7 @@ import { Socio, SocioInsert, Pedido } from '../types';
 import { DataTable } from '../components/DataTable';
 import { ColumnDef } from '@tanstack/react-table';
 import { SocioDetailsModal } from '../components/socios/SocioDetailsModal';
+import { SocioMobileCard } from '../components/socios/SocioMobileCard';
 
 export const Socios = () => {
   const [socios, setSocios] = useState<Socio[]>([]);
@@ -187,12 +188,38 @@ export const Socios = () => {
             <Loader2 className="w-8 h-8 text-brand animate-spin" />
           </div>
         ) : (
-          <DataTable 
-            columns={columns} 
-            data={socios} 
-            searchColumn="nombre"
-            searchPlaceholder="Buscar por nombre..."
-          />
+          <>
+            <div className="hidden md:block">
+              <DataTable 
+                columns={columns} 
+                data={socios} 
+                searchColumn="nombre"
+                searchPlaceholder="Buscar por nombre..."
+              />
+            </div>
+
+            <div className="md:hidden space-y-4">
+              {socios.length === 0 ? (
+                <div className="text-center py-12 text-text-secondary">
+                  <p>No hay socios registrados.</p>
+                </div>
+              ) : (
+                socios.map(socio => (
+                  <SocioMobileCard
+                    key={socio.id}
+                    socio={socio}
+                    metrics={getSocioMetrics(socio.id)}
+                    onView={(s) => setSelectedSocio(s)}
+                    onEdit={(s) => {
+                      setEditingSocio(s);
+                      setIsModalOpen(true);
+                    }}
+                    onDelete={handleDelete}
+                  />
+                ))
+              )}
+            </div>
+          </>
         )}
       </div>
 

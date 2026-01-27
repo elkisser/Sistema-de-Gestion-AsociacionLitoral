@@ -23,6 +23,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Badge } from '../components/ui/Badge';
 import { cn } from '../lib/utils';
 import { useUIStore } from '../services/uiStore';
+import { PedidoMobileCard } from '../components/orders/PedidoMobileCard';
 
 export const Pedidos = () => {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
@@ -297,12 +298,42 @@ export const Pedidos = () => {
             <Loader2 className="w-8 h-8 text-brand animate-spin" />
           </div>
         ) : (
-          <DataTable 
-            columns={columns} 
-            data={filteredPedidos} 
-            searchColumn="variedad"
-            searchPlaceholder="Buscar por variedad..."
-          />
+          <>
+            <div className="hidden md:block">
+              <DataTable 
+                columns={columns} 
+                data={filteredPedidos} 
+                searchColumn="variedad"
+                searchPlaceholder="Buscar por variedad..."
+              />
+            </div>
+
+            <div className="md:hidden space-y-4">
+              {filteredPedidos.length === 0 ? (
+                <div className="text-center py-12 text-text-secondary">
+                  <p>No hay pedidos que coincidan con los filtros.</p>
+                </div>
+              ) : (
+                filteredPedidos.map(pedido => (
+                  <PedidoMobileCard
+                    key={pedido.id}
+                    pedido={pedido}
+                    onStatusChange={(id, value) => handleInlineStatusUpdate(id, 'estado_pedido', value)}
+                    onPaymentChange={(id) => handleInlineStatusUpdate(
+                      id, 
+                      'estado_pago', 
+                      pedido.estado_pago === 'confirmado' ? 'pendiente' : 'confirmado'
+                    )}
+                    onEdit={(p) => {
+                      setEditingPedido(p);
+                      setIsModalOpen(true);
+                    }}
+                    onDelete={handleDelete}
+                  />
+                ))
+              )}
+            </div>
+          </>
         )}
       </div>
 
