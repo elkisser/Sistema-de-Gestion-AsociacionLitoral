@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { ShoppingBag, Loader2, AlertCircle } from 'lucide-react';
+import { Loader2, AlertCircle } from 'lucide-react';
 import { useAuthStore } from '../services/authStore';
+import { AsociacionIcon } from '../components/icons/AsociacionIcon';
 
 export const Login = () => {
   const [email, setEmail] = useState('');
@@ -39,9 +40,9 @@ export const Login = () => {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-brand rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-lg shadow-brand/20">
-            <ShoppingBag className="w-8 h-8 text-black" />
+            <AsociacionIcon className="w-8 h-8 text-black" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight mb-2">Bienvenido</h1>
+          <h1 className="text-3xl font-bold tracking-tight mb-2">Asociación Litoral</h1>
           <p className="text-text-secondary">Ingresa tus credenciales para acceder</p>
         </div>
 

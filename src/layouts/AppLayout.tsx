@@ -14,6 +14,8 @@ import { NotificationsMenu } from '../components/notifications/NotificationsMenu
 import { QuickOrderModal } from '../components/orders/QuickOrderModal';
 import { QuickOrderButton } from '../components/orders/QuickOrderButton';
 
+import { AsociacionIcon } from '../components/icons/AsociacionIcon';
+
 export const AppLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { signOut, user } = useAuthStore();
@@ -52,9 +54,9 @@ export const AppLayout = () => {
         <div className="p-6 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-brand flex items-center justify-center">
-              <ShoppingBag className="w-5 h-5 text-black" />
+              <AsociacionIcon className="w-5 h-5 text-black" />
             </div>
-            <span className="font-bold text-xl tracking-tight">Gestión<span className="text-brand">Litoral</span></span>
+            <span className="font-bold text-xl tracking-tight">Asociación<span className="text-brand">Litoral</span></span>
           </div>
           <button 
             onClick={() => setIsSidebarOpen(false)}
