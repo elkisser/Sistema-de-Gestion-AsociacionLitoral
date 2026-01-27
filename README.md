@@ -1,57 +1,36 @@
-# React + TypeScript + Vite
+# 🌿 Sistema de Gestión - Asociación Litoral
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Plataforma integral diseñada para optimizar la administración y el flujo de trabajo de la Asociación Litoral. Este sistema centraliza la información y facilita la toma de decisiones mediante una interfaz moderna, intuitiva y totalmente adaptada a dispositivos móviles.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Características Principales
 
-## Expanding the ESLint configuration
+### 👥 Gestión de Socios
+Administración completa de la base de datos de socios.
+- **Perfiles Detallados:** Acceso rápido a información clave de cada miembro.
+- **Historial:** Seguimiento de interacciones y estado de actividad.
+- **Acciones Rápidas:** Contacto y actualización de datos simplificada.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 📦 Control de Pedidos
+Flujo de trabajo eficiente para el manejo de solicitudes.
+- **Seguimiento en Tiempo Real:** Monitoreo del estado de cada pedido (Pendiente, En Reparto, Entregado).
+- **Filtros Inteligentes:** Búsqueda avanzada por estado, fecha o socio.
+- **Gestión Visual:** Uso de códigos de color e iconos para una identificación rápida de prioridades.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+### 📊 Dashboard Analítico
+Visión global del rendimiento de la asociación.
+- **Métricas Clave:** Visualización de estadísticas vitales en tiempo real.
+- **Indicadores de Desempeño:** Gráficos claros para evaluar el progreso mensual y semanal.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 📱 Experiencia Mobile-First
+Diseñado pensando en la movilidad.
+- **Interfaz Adaptable:** Navegación fluida tanto en escritorio como en smartphones.
+- **Modales Intuitivos:** Gestión de filtros y detalles optimizada para pantallas táctiles.
+- **Acceso Remoto:** Control total de la gestión desde cualquier lugar.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default tseslint.config({
-  extends: [
-    // other configs...
-    // Enable lint rules for React
-    reactX.configs['recommended-typescript'],
-    // Enable lint rules for React DOM
-    reactDom.configs.recommended,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## 💡 Enfoque del Proyecto
+
+El objetivo principal es modernizar los procesos administrativos, reduciendo la carga operativa manual y asegurando que la información crítica esté siempre accesible y organizada. La plataforma prioriza la usabilidad y la eficiencia, permitiendo a los administradores centrarse en lo más importante: el crecimiento y bienestar de la asociación.
