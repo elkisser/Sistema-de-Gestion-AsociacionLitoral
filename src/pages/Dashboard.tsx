@@ -57,7 +57,11 @@ export const Dashboard = () => {
     };
     fetchData();
     const unsubscribe = subscribe();
-    return () => unsubscribe && unsubscribe();
+    return () => {
+      if (unsubscribe != null && typeof unsubscribe === 'function') {
+        (unsubscribe as Function)();
+      }
+    };
   }, []);
 
   if (loading) {
