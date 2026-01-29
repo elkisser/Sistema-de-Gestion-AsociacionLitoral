@@ -326,14 +326,16 @@ export const Pedidos = () => {
           {/* Search Bar */}
           <div className="flex gap-2 flex-1 justify-center">
             <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
-              <input
-                type="text"
-                placeholder="Buscar por variedad o socio..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 bg-background-tertiary border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand/50 text-sm"
-              />
+              <div className="w-full flex items-center px-3 py-2.5 bg-background-tertiary border border-border rounded-xl focus-within:ring-2 focus-within:ring-brand/50 focus-within:border-brand transition-all">
+                <Search className="w-4 h-4 text-text-secondary mr-2 flex-shrink-0" />
+                <input
+                  type="text"
+                  placeholder="Buscar por variedad o socio..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-transparent border-none p-0 focus:outline-none text-sm placeholder:text-text-secondary/50 placeholder:text-sm"
+                />
+              </div>
             </div>
             <button
               onClick={() => setIsFilterModalOpen(true)}
