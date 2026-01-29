@@ -50,16 +50,18 @@ export function DataTable<TData, TValue>({
   return (
     <div className="space-y-4">
       {searchColumn && (
-        <div className="relative max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
-          <input
-            value={(table.getColumn(searchColumn)?.getFilterValue() as string) ?? ''}
-            onChange={(event) =>
-              table.getColumn(searchColumn)?.setFilterValue(event.target.value)
-            }
-            placeholder={searchPlaceholder}
-            className="input-field pl-9"
-          />
+        <div className="flex justify-center w-full">
+          <div className="relative max-w-sm w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
+            <input
+              value={(table.getColumn(searchColumn)?.getFilterValue() as string) ?? ''}
+              onChange={(event) =>
+                table.getColumn(searchColumn)?.setFilterValue(event.target.value)
+              }
+              placeholder={searchPlaceholder}
+              className="input-field pl-9 w-full"
+            />
+          </div>
         </div>
       )}
 

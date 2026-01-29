@@ -15,6 +15,7 @@ import { DataTable } from '../components/DataTable';
 import { ColumnDef } from '@tanstack/react-table';
 import { SocioDetailsModal } from '../components/socios/SocioDetailsModal';
 import { SocioMobileCard } from '../components/socios/SocioMobileCard';
+import { DeleteConfirmationModal } from '../components/ui/DeleteConfirmationModal';
 
 export const Socios = () => {
   const [socios, setSocios] = useState<Socio[]>([]);
@@ -23,6 +24,8 @@ export const Socios = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSocio, setEditingSocio] = useState<Socio | null>(null);
   const [selectedSocio, setSelectedSocio] = useState<Socio | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [socioToDelete, setSocioToDelete] = useState<string | null>(null);
 
   const { register, handleSubmit, reset, setValue } = useForm<SocioInsert>();
 
@@ -72,10 +75,15 @@ export const Socios = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('¿Estás seguro de eliminar este socio?')) return;
+  const handleDelete = (id: string) => {
+    setSocioToDelete(id);
+    setDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!socioToDelete) return;
     try {
-      await api.socios.delete(id);
+      await api.socios.delete(socioToDelete);
       toast.success('Socio eliminado');
       fetchData();
     } catch (error) {
@@ -286,6 +294,17 @@ export const Socios = () => {
           onClose={() => setSelectedSocio(null)} 
         />
       )}
+
+      <DeleteConfirmationModal
+        isOpen={deleteModalOpen}
+        onClose={() => {
+          setDeleteModalOpen(false);
+          setSocioToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        title="¿Eliminar socio?"
+        description="Esta acción eliminará al socio y todos sus pedidos asociados. No se puede deshacer."
+      />
     </div>
   );
 };

@@ -38,3 +38,15 @@ export type PedidoUpdate = Partial<PedidoInsert>;
 
 export type SocioInsert = Omit<Socio, 'id' | 'created_at'>;
 export type SocioUpdate = Partial<SocioInsert>;
+
+export type SocioArchivo = {
+  id: string;
+  socio_id: string;
+  nombre: string;
+  url: string;
+  tipo: string;
+  peso: number;
+  created_at: string;
+};
+
+export type SocioArchivoInsert = Omit<SocioArchivo, 'id' | 'created_at'>;

@@ -17,6 +17,7 @@ import { es } from 'date-fns/locale';
 import { useUIStore } from '../../services/uiStore';
 import { Loader2 } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { SocioFiles } from './SocioFiles';
 
 interface SocioDetailsModalProps {
   socio: Socio;
@@ -57,7 +58,7 @@ export const SocioDetailsModal = ({ socio, onClose }: SocioDetailsModalProps) =>
 
   return (
     <div className="fixed inset-0 z-[100] flex items-end sm:items-stretch sm:justify-end bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-background-secondary border-t sm:border-l sm:border-t-0 border-border h-[90vh] sm:h-full w-full sm:max-w-md shadow-2xl flex flex-col rounded-t-2xl sm:rounded-none animate-in slide-in-from-bottom sm:slide-in-from-right duration-300">
+      <div className="bg-background-secondary border-t sm:border-l sm:border-t-0 border-border h-[100dvh] w-full sm:max-w-md shadow-2xl flex flex-col rounded-none animate-in slide-in-from-bottom sm:slide-in-from-right duration-300">
         <div className="p-6 border-b border-border flex items-center justify-between bg-background-tertiary/50">
           <div>
             <h2 className="font-bold text-xl">{socio.nombre}</h2>
@@ -101,6 +102,8 @@ export const SocioDetailsModal = ({ socio, onClose }: SocioDetailsModalProps) =>
               <p className="text-sm font-medium text-text-primary">{frequency}</p>
             </div>
           </div>
+
+          <SocioFiles socioId={socio.id} />
 
           <button 
             onClick={() => {

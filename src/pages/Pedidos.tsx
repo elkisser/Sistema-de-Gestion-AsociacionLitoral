@@ -28,6 +28,7 @@ import { PedidoMobileCard } from '../components/orders/PedidoMobileCard';
 import { StatusUpdateModal } from '../components/orders/StatusUpdateModal';
 import { MobileFilterModal } from '../components/orders/MobileFilterModal';
 import { RefreshCw } from 'lucide-react';
+import { DeleteConfirmationModal } from '../components/ui/DeleteConfirmationModal';
 
 export const Pedidos = () => {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
@@ -40,6 +41,8 @@ export const Pedidos = () => {
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [selectedPedidoForStatus, setSelectedPedidoForStatus] = useState<Pedido | null>(null);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [pedidoToDelete, setPedidoToDelete] = useState<string | null>(null);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const statusFilter = searchParams.get('estado') || 'all';
@@ -124,10 +127,15 @@ export const Pedidos = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('¿Estás seguro de eliminar este pedido?')) return;
+  const handleDelete = (id: string) => {
+    setPedidoToDelete(id);
+    setDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!pedidoToDelete) return;
     try {
-      await api.pedidos.delete(id);
+      await api.pedidos.delete(pedidoToDelete);
       toast.success('Pedido eliminado');
       fetchData();
     } catch (error) {
@@ -316,8 +324,8 @@ export const Pedidos = () => {
         {/* Search and Filters Bar */}
         <div className="flex flex-col md:flex-row gap-4">
           {/* Search Bar */}
-          <div className="flex gap-2 flex-1">
-            <div className="relative flex-1">
+          <div className="flex gap-2 flex-1 justify-center">
+            <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
               <input
                 type="text"
@@ -608,6 +616,17 @@ export const Pedidos = () => {
           </div>
         </div>
       )}
+
+      <DeleteConfirmationModal
+        isOpen={deleteModalOpen}
+        onClose={() => {
+          setDeleteModalOpen(false);
+          setPedidoToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        title="¿Eliminar pedido?"
+        description="Esta acción eliminará el pedido permanentemente. No se puede deshacer."
+      />
     </div>
   );
 };
